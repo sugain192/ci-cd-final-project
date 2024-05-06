@@ -29,3 +29,23 @@ runAsUser: 0
       # Delete files and directories starting with .. plus any other character
       rm -rf "${WORKSPACE_SOURCE_PATH}"/..?*
     fi
+apiVersion: tekton.dev/v1beta1
+kind: Task
+name: nose
+spec.workspaces.name: source
+params:
+name: args
+description: Arguments to pass to nose
+type: string
+default: "-v"
+This task will have a single step called nosetests as follows:
+
+name: nosetests
+image: python:3.9-slim
+workingDir: $(workspaces.source.path)
+
+ #!/bin/bash
+  set -e
+  python -m pip install --upgrade pip wheel
+  pip install -r requirements.txt
+  nosetests $(params.args)
